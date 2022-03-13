@@ -7,7 +7,7 @@ defmodule UrlShortnerApi.SlugCacheTest do
 
   describe "Slug Cache without setup" do
     test "initializes with slugs and default cache size when provided initial size is equal to 0" do
-      {:ok, slug_cache} = SlugCache.start_link(0)
+      {:ok, slug_cache} = SlugCache.start_link([0, __MODULE__])
       cache = :sys.get_state(slug_cache)
 
       assert length(cache) == SlugCache.get_env(:cache_size)
@@ -15,7 +15,7 @@ defmodule UrlShortnerApi.SlugCacheTest do
     end
 
     test "initializes with slugs and default cache size when provided initial size is less than 0" do
-      {:ok, slug_cache} = SlugCache.start_link(-1)
+      {:ok, slug_cache} = SlugCache.start_link([-1, __MODULE__])
       cache = :sys.get_state(slug_cache)
 
       assert length(cache) == SlugCache.get_env(:cache_size)
@@ -24,7 +24,7 @@ defmodule UrlShortnerApi.SlugCacheTest do
 
     test "initializes with slugs and maximum cache size when provided initial size is greater than maximum" do
       max = SlugCache.get_env(:max_size)
-      {:ok, slug_cache} = SlugCache.start_link(max + 100)
+      {:ok, slug_cache} = SlugCache.start_link([max + 100, __MODULE__])
       cache = :sys.get_state(slug_cache)
 
       assert length(cache) == max
@@ -34,7 +34,7 @@ defmodule UrlShortnerApi.SlugCacheTest do
 
   describe "Slug Cache" do
     setup do
-      slug_cache = start_supervised!({SlugCache, SlugCache.get_env(:cache_size)})
+      slug_cache = start_supervised!({SlugCache, [SlugCache.get_env(:cache_size), __MODULE__]})
       %{slug_cache: slug_cache}
     end
 

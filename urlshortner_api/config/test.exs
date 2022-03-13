@@ -13,6 +13,20 @@ config :urlshortner_api, UrlshortnerApi.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
+config :urlshortner_api,
+  children: [
+    # Start the Ecto repository
+    UrlshortnerApi.Repo,
+    # Start the Telemetry supervisor
+    UrlshortnerApiWeb.Telemetry,
+    # Start the PubSub system
+    {Phoenix.PubSub, name: UrlshortnerApi.PubSub},
+    # Start the Endpoint (http/https)
+    UrlshortnerApiWeb.Endpoint
+    # Start a worker by calling: UrlshortnerApi.Worker.start_link(arg)
+    # {UrlshortnerApi.Worker, arg}
+  ]
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :urlshortner_api, UrlshortnerApiWeb.Endpoint,

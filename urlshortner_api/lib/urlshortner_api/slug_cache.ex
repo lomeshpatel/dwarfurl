@@ -23,7 +23,8 @@ defmodule UrlshortnerApi.SlugCache do
 
   # Client API
 
-  def start_link(size, opts \\ []) when is_integer(size) do
+  def start_link(opts) when is_list(opts) do
+    [size, name] = opts
     Logger.info("Provided initial size: #{size}")
     max = get_env(:max_size)
 
@@ -34,7 +35,7 @@ defmodule UrlshortnerApi.SlugCache do
         s -> s
       end
 
-    GenServer.start_link(__MODULE__, size, opts)
+    GenServer.start_link(__MODULE__, size, name: name)
   end
 
   def get(pid) do
