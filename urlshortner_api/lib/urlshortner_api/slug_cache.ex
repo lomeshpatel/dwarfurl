@@ -8,35 +8,71 @@ defmodule UrlshortnerApi.SlugCache do
 
   require Logger
 
+  alias UrlshortnerApi.SlugGenerator
+
+  def get_env(key) do
+    config =
+      Application.get_env(:urlshortner_api, __MODULE__,
+        cache_size: 100,
+        max_size: 1000,
+        refill_threshold: 0.25
+      )
+
+    config[key]
+  end
+
   # Client API
 
-  def start_link(default) when is_list(default) do
-    GenServer.start_link(__MODULE__, default)
+  def start_link(size, opts \\ []) when is_integer(size) do
+    Logger.info("Provided initial size: #{size}")
+    max = get_env(:max_size)
+
+    size =
+      case size do
+        s when s <= 0 -> get_env(:cache_size)
+        s when max < s -> max
+        s -> s
+      end
+
+    GenServer.start_link(__MODULE__, size, opts)
   end
 
   def get(pid) do
     GenServer.call(pid, :pop)
   end
 
-  def refill(pid, more_slugs) do
-    GenServer.cast(pid, {:refill, more_slugs})
+  def refill(pid) do
+    GenServer.cast(pid, :refill)
   end
 
   # Server (callbacks)
 
   @impl true
-  def init(cache) do
-    {:ok, cache}
+  def init(size) do
+    Logger.info("Starting Slug cache GenServer with size: #{inspect(size)}")
+    {:ok, SlugGenerator.list_and_update_unused_slugs(size)}
   end
 
   @impl true
   def handle_call(:pop, _from, cache) do
     cache =
-      if is_nil(List.first(cache)) do
+      if length(cache) == 0 do
+        Logger.warn(
+          "Slug cache is completely depleted. This should never happen. Refilling immediately..."
+        )
+
         fetch_slugs(cache)
       else
         cache
       end
+
+    if length(cache) - 1 <= get_env(:cache_size) * get_env(:refill_threshold) do
+      Logger.info(
+        "Slug cache size: #{inspect(length(cache) - 1)} is below the threshold: #{inspect(get_env(:cache_size) * get_env(:refill_threshold))}. Refilling asynchronously..."
+      )
+
+      refill(self())
+    end
 
     slug = List.first(cache)
 
@@ -44,13 +80,13 @@ defmodule UrlshortnerApi.SlugCache do
   end
 
   @impl true
-  def handle_cast({:refill, more_slugs}, cache) do
-    {:noreply, cache ++ more_slugs}
+  def handle_cast(:refill, cache) do
+    {:noreply, cache ++ SlugGenerator.list_and_update_unused_slugs(get_env(:cache_size))}
   end
 
   # Private functions
 
   defp fetch_slugs(cache) do
-    cache ++ ["test", "test1", "test2"]
+    cache ++ SlugGenerator.list_and_update_unused_slugs(get_env(:cache_size))
   end
 end

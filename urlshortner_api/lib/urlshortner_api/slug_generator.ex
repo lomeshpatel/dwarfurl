@@ -65,7 +65,7 @@ defmodule UrlshortnerApi.SlugGenerator do
 
     slugs =
       if is_nil(slugs) || length(slugs) <= limit do
-        create_slugs_bulk()
+        create_slugs_bulk(limit + get_env(:default_slugs_batch_size))
         list_slugs(false, limit)
       else
         slugs
@@ -157,8 +157,8 @@ defmodule UrlshortnerApi.SlugGenerator do
 
   Number of slugs created is determined by :default_slugs_batch_size environment variable.
   """
-  def create_slugs_bulk() do
-    {count, records} = Repo.insert_all(Slug, generate_slugs(), on_conflict: :nothing)
+  def create_slugs_bulk(count \\ get_env(:default_slugs_batch_size)) do
+    {count, records} = Repo.insert_all(Slug, generate_slugs(count), on_conflict: :nothing)
     Logger.info("Number of new slugs generated: #{inspect(count)}")
 
     {count, records}

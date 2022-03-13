@@ -31,3 +31,8 @@ config :urlshortner_api, UrlshortnerApi.SlugGenerator,
   max_slug_length: 16,
   default_slugs_batch_size: 10,
   max_slugs_batch_size: 1000
+
+config :urlshortner_api, UrlshortnerApi.SlugCache,
+  cache_size: 10,
+  max_size: 100,
+  refill_threshold: 0.25
