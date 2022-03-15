@@ -6,11 +6,6 @@ defmodule UrlshortnerApiWeb.UrlController do
 
   action_fallback UrlshortnerApiWeb.FallbackController
 
-  def index(conn, _params) do
-    urls = UrlShortner.list_urls()
-    render(conn, "index.json", urls: urls)
-  end
-
   def create(conn, %{"url" => url_params}) do
     with {:ok, %Url{} = url} <- UrlShortner.create_url(url_params) do
       conn
@@ -22,15 +17,10 @@ defmodule UrlshortnerApiWeb.UrlController do
 
   def show(conn, %{"slug" => slug}) do
     url = UrlShortner.get_url!(slug)
-    render(conn, "show.json", url: url)
-  end
 
-  def update(conn, %{"slug" => slug, "url" => url_params}) do
-    url = UrlShortner.get_url!(slug)
-
-    with {:ok, %Url{} = url} <- UrlShortner.update_url(url, url_params) do
-      render(conn, "show.json", url: url)
-    end
+    conn
+    |> put_status(:moved_permanently)
+    |> redirect(external: url.original_url)
   end
 
   def delete(conn, %{"slug" => slug}) do

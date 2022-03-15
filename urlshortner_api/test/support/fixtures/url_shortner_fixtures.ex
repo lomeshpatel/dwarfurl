@@ -11,8 +11,8 @@ defmodule UrlshortnerApi.UrlShortnerFixtures do
     {:ok, url} =
       attrs
       |> Enum.into(%{
-        original_url: "some original_url",
-        slug: "some slug"
+        original_url: "https://www.looneytunes.com/eeeeeeeeeeehhhhh/whats/up/doc",
+        slug: "someslug"
       })
       |> UrlshortnerApi.UrlShortner.create_url()
 

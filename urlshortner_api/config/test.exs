@@ -41,6 +41,7 @@ config :logger, level: :info
 config :phoenix, :plug_init_mode, :runtime
 
 config :urlshortner_api, UrlshortnerApi.SlugGenerator,
+  min_slug_length: 4,
   default_slug_length: 8,
   max_slug_length: 16,
   default_slugs_batch_size: 10,

@@ -5,15 +5,19 @@ defmodule UrlshortnerApi.UrlShortnerTest do
 
   describe "urls" do
     alias UrlshortnerApi.UrlShortner.Url
+    alias UrlshortnerApi.SlugCache
+    alias UrlshortnerApi.SlugGenerator
 
     import UrlshortnerApi.UrlShortnerFixtures
 
-    @invalid_attrs %{original_url: nil, slug: nil}
+    setup do
+      slug_cache =
+        start_supervised!({SlugCache, [SlugCache.get_env(:cache_size), UrlshortnerApi.SlugCache]})
 
-    test "list_urls/0 returns all urls" do
-      url = url_fixture()
-      assert UrlShortner.list_urls() == [url]
+      %{slug_cache: slug_cache}
     end
+
+    @invalid_attrs %{original_url: nil, slug: nil}
 
     test "get_url!/1 returns the url with given id" do
       url = url_fixture()
@@ -32,30 +36,38 @@ defmodule UrlshortnerApi.UrlShortnerTest do
       assert {:error, %Ecto.Changeset{}} = UrlShortner.create_url(@invalid_attrs)
     end
 
-    test "update_url/2 with valid data updates the url" do
-      url = url_fixture()
-      update_attrs = %{original_url: "some updated original_url", slug: "some updated slug"}
-
-      assert {:ok, %Url{} = url} = UrlShortner.update_url(url, update_attrs)
-      assert url.original_url == "some updated original_url"
-      assert url.slug == "some updated slug"
+    test "create_url/1 with no data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = UrlShortner.create_url()
     end
 
-    test "update_url/2 with invalid data returns error changeset" do
-      url = url_fixture()
-      assert {:error, %Ecto.Changeset{}} = UrlShortner.update_url(url, @invalid_attrs)
-      assert url == UrlShortner.get_url!(url.slug)
+    test "create_url/1 with no slug creates a url after fetching a slug from the SlugCache", %{
+      slug_cache: slug_cache
+    } do
+      slug = List.first(:sys.get_state(slug_cache))
+      attrs = %{original_url: "https://www.looneytunes.com/eeeeeeeeeeeeehhhhhhh/whats/up/doc"}
+
+      assert {:ok, %Url{} = url} = UrlShortner.create_url(attrs)
+      assert url.original_url == attrs.original_url
+      assert url.slug == slug
     end
 
-    test "delete_url/1 deletes the url" do
+    test "create_url/1 with slug less than minimum length returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = UrlShortner.create_url(%{@invalid_attrs | slug: "a"})
+    end
+
+    test "create_url/1 with slug greater than maximum length returns error changeset" do
+      long_slug =
+        1..SlugGenerator.get_env(:max_slug_length)
+        |> Enum.reduce("ab", fn _, acc -> acc <> "cd" end)
+
+      assert {:error, %Ecto.Changeset{}} =
+               UrlShortner.create_url(%{@invalid_attrs | slug: long_slug})
+    end
+
+    test("delete_url/1 deletes the url") do
       url = url_fixture()
       assert {:ok, %Url{}} = UrlShortner.delete_url(url)
       assert_raise Ecto.NoResultsError, fn -> UrlShortner.get_url!(url.slug) end
-    end
-
-    test "change_url/1 returns a url changeset" do
-      url = url_fixture()
-      assert %Ecto.Changeset{} = UrlShortner.change_url(url)
     end
   end
 end
