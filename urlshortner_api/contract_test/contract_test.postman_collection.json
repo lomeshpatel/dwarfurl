@@ -1,0 +1,578 @@
+{
+	"info": {
+		"_postman_id": "9c2ba7b4-4182-4c2c-8313-feb6636daa45",
+		"name": "Dwarfurl API - Contract Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Happy-Path",
+			"item": [
+				{
+					"name": "Shorten URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Shorten URL with valid input returns 201 with valid data', function () {",
+									"    pm.response.to.have.status(201);",
+									"",
+									"    const schema = {\"description\":\"Example response\",\"content\":{\"application/json\":{\"schema\":{\"description\":\"\",\"type\":\"object\",\"x-examples\":{\"example-1\":{\"data\":{\"original_url\":\"https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574\",\"slug\":\"vssXsEZx\"}}},\"properties\":{\"data\":{\"description\":\"Base model that contains neccessary data to facilitate URL Shortening use-cases.\",\"type\":\"object\",\"x-examples\":{\"example-1\":{\"original_url\":\"https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574\",\"slug\":\"vssXsEZx\"}},\"title\":\"URL\",\"properties\":{\"original_url\":{\"type\":\"string\",\"minLength\":1},\"slug\":{\"type\":\"string\",\"minLength\":4,\"maxLength\":16}},\"required\":[\"original_url\"]}},\"required\":[\"data\"]},\"examples\":{\"example-1\":{\"value\":{\"data\":{\"original_url\":\"https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574\",\"slug\":\"vssXsEZx\"}}}}}}};",
+									"",
+									"    const response = pm.response.json();",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;",
+									"",
+									"    pm.collectionVariables.set(\"slug\", response.data.slug);",
+									"    pm.collectionVariables.set(\"original_url\", response.data.original_url);",
+									"});",
+									"",
+									"pm.test('Shorten URL with valid input returns in under 200ms', function() {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"postman.setNextRequest('Fetch original URL')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"url\": {\r\n        \"original_url\": \"https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls"
+							]
+						},
+						"description": "Creates a new URL object for the provided long URL and returns it with newly generated slug that uniquely maps to given original long URL.\n\nOptionally, a slug can be provided which will then be associated with the given long URL if provided slug is not already in use."
+					},
+					"response": [
+						{
+							"name": "Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"url\": {\n    \"original_url\": \"https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/v1/urls",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"urls"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"data\": {\n    \"original_url\": \"https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574\",\n    \"slug\": \"vssXsEZx\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch original URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 301\", function () {\r",
+									"    pm.response.to.have.status(301);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response Header Location is present\", function () {\r",
+									"    pm.response.to.have.header(\"Location\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response Header Location is populated with original URL\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Location')).to.eql(pm.collectionVariables.get(\"original_url\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('Fetching original URL takes under 200ms', function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest('Delete URL')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followRedirects": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls/{{slug}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls",
+								"{{slug}}"
+							]
+						},
+						"description": "Fetches original URL associated with the provided slug and redirects to it."
+					},
+					"response": [
+						{
+							"name": "Redirect to original URL.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v1/urls/{{slug}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"urls",
+										"{{slug}}"
+									]
+								}
+							},
+							"status": "Moved Permanently",
+							"code": 301,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "location",
+									"value": "Lorem non cillum",
+									"description": "Original URL"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Delete URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.test('Deleting URL takes under 200ms', function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest('Shorten URL - No Body')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls/{{slug}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls",
+								"{{slug}}"
+							]
+						},
+						"description": "Deletes the URL object associated with the provided slug."
+					},
+					"response": [
+						{
+							"name": "No Content",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/v1/urls/{{slug}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"v1",
+										"urls",
+										"{{slug}}"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Sad-Path",
+			"item": [
+				{
+					"name": "Shorten URL - No Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Shorten URL returns 400 when no body is provided', function () {",
+									"    if (pm.response.code !== 400){",
+									"        return;",
+									"    }",
+									"    const schema = {\"description\":\"Error response model.\",\"content\":{\"application/json\":{\"schema\":{\"description\":\"\",\"type\":\"object\",\"properties\":{\"errors\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"detail\"]}},\"required\":[\"errors\"],\"x-examples\":{\"example-1\":{\"errors\":{\"detail\":\"No URL found for that slug.\"}}}},\"examples\":{\"example-1\":{\"value\":{\"errors\":{\"detail\":\"Detailed error message.\"}}}}}}};",
+									"",
+									"    const response = pm.response.json();",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;",
+									"});",
+									"",
+									"postman.setNextRequest('Shorten URL - Malformed Body')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls"
+							]
+						},
+						"description": "Creates a new URL object for the provided long URL and returns it with newly generated slug that uniquely maps to given original long URL.\n\nOptionally, a slug can be provided which will then be associated with the given long URL if provided slug is not already in use."
+					},
+					"response": []
+				},
+				{
+					"name": "Shorten URL - Malformed Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Shorten URL returns 400 when malformed body is provided', function () {",
+									"    if (pm.response.code !== 400){",
+									"        return;",
+									"    }",
+									"    const schema = {\"description\":\"Error response model.\",\"content\":{\"application/json\":{\"schema\":{\"description\":\"\",\"type\":\"object\",\"properties\":{\"errors\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"detail\"]}},\"required\":[\"errors\"],\"x-examples\":{\"example-1\":{\"errors\":{\"detail\":\"No URL found for that slug.\"}}}},\"examples\":{\"example-1\":{\"value\":{\"errors\":{\"detail\":\"Detailed error message.\"}}}}}}};",
+									"",
+									"    const response = pm.response.json();",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;",
+									"});",
+									"",
+									"postman.setNextRequest('Shorten URL - Blank URL')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"malformed\": \"body\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls"
+							]
+						},
+						"description": "Creates a new URL object for the provided long URL and returns it with newly generated slug that uniquely maps to given original long URL.\n\nOptionally, a slug can be provided which will then be associated with the given long URL if provided slug is not already in use."
+					},
+					"response": []
+				},
+				{
+					"name": "Shorten URL - Blank URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Shorten URL returns 422 when blank URL is provided', function () {",
+									"    pm.response.to.have.status(422);",
+									"",
+									"    const schema = {\"description\":\"Error response model.\",\"content\":{\"application/json\":{\"schema\":{\"description\":\"\",\"type\":\"object\",\"properties\":{\"errors\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"detail\"]}},\"required\":[\"errors\"],\"x-examples\":{\"example-1\":{\"errors\":{\"detail\":\"No URL found for that slug.\"}}}},\"examples\":{\"example-1\":{\"value\":{\"errors\":{\"detail\":\"Detailed error message.\"}}}}}}};",
+									"",
+									"    const response = pm.response.json();",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;",
+									"});",
+									"",
+									"postman.setNextRequest('Fetch original URL - Not Found')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"url\": {\r\n        \"original_url\": \"\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls"
+							]
+						},
+						"description": "Creates a new URL object for the provided long URL and returns it with newly generated slug that uniquely maps to given original long URL.\n\nOptionally, a slug can be provided which will then be associated with the given long URL if provided slug is not already in use."
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch original URL - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Fetch original URL returns 404 when no URL is found\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"\r",
+									"    const schema = {\"description\":\"Error response model.\",\"content\":{\"application/json\":{\"schema\":{\"description\":\"\",\"type\":\"object\",\"properties\":{\"errors\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"detail\"]}},\"required\":[\"errors\"],\"x-examples\":{\"example-1\":{\"errors\":{\"detail\":\"No URL found for that slug.\"}}}},\"examples\":{\"example-1\":{\"value\":{\"errors\":{\"detail\":\"Detailed error message.\"}}}}}}};\r",
+									"\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest('Delete URL - Not Found')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls/not-found",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls",
+								"not-found"
+							]
+						},
+						"description": "Fetches original URL associated with the provided slug and redirects to it."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete URL - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Fetch original URL returns 404 when no URL is found\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"\r",
+									"    const schema = {\"description\":\"Error response model.\",\"content\":{\"application/json\":{\"schema\":{\"description\":\"\",\"type\":\"object\",\"properties\":{\"errors\":{\"type\":\"object\",\"properties\":{\"detail\":{\"type\":\"string\",\"minLength\":1}},\"required\":[\"detail\"]}},\"required\":[\"errors\"],\"x-examples\":{\"example-1\":{\"errors\":{\"detail\":\"No URL found for that slug.\"}}}},\"examples\":{\"example-1\":{\"value\":{\"errors\":{\"detail\":\"Detailed error message.\"}}}}}}};\r",
+									"\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(tv4.validate(response, schema)).to.be.true;\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(null)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v1/urls/not-found",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"urls",
+								"not-found"
+							]
+						},
+						"description": "Deletes the URL object associated with the provided slug."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "slug",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "original_url",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
