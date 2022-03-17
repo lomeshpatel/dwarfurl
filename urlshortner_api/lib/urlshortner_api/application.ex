@@ -7,18 +7,7 @@ defmodule UrlshortnerApi.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      # Start the Ecto repository
-      UrlshortnerApi.Repo,
-      # Start the Telemetry supervisor
-      UrlshortnerApiWeb.Telemetry,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: UrlshortnerApi.PubSub},
-      # Start the Endpoint (http/https)
-      UrlshortnerApiWeb.Endpoint
-      # Start a worker by calling: UrlshortnerApi.Worker.start_link(arg)
-      # {UrlshortnerApi.Worker, arg}
-    ]
+    children = Application.get_env(:urlshortner_api, :children)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

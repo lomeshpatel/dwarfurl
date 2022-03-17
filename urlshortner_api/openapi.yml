@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: Dwarfurl API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:4000'
+    description: Dev
+paths:
+  /v1/urls:
+    post:
+      summary: Shorten URL
+      operationId: shorten-url
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/URLResponse'
+              examples:
+                example-response:
+                  value:
+                    data:
+                      original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+                      slug: vssXsEZx
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              examples:
+                example-not-found:
+                  value:
+                    errors:
+                      detail: Bad Request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/URLRequest'
+            examples:
+              example-request:
+                value:
+                  url:
+                    original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+        description: ''
+      description: |-
+        Creates a new URL object for the provided long URL and returns it with newly generated slug that uniquely maps to given original long URL.
+
+        Optionally, a slug can be provided which will then be associated with the given long URL if provided slug is not already in use.
+  '/v1/urls/{slug}':
+    parameters:
+      - schema:
+          type: string
+        name: slug
+        in: path
+        required: true
+        description: Key to the original URL
+    get:
+      summary: Fetch original URL
+      tags: []
+      responses:
+        '301':
+          description: Redirect to original URL.
+          headers:
+            location:
+              schema:
+                type: string
+              description: Original URL
+        '404':
+          description: No URL found that's associated with the given slug.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              examples:
+                example-not-found:
+                  value:
+                    errors:
+                      detail: No URL found for that slug.
+      operationId: get-url
+      description: Fetches original URL associated with the provided slug and redirects to it.
+    delete:
+      summary: Delete URL
+      operationId: delete-url
+      responses:
+        '204':
+          description: Successfully deleted the URL associated with the given slug.
+        '404':
+          description: No URL found that's associated with the given slug.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ErrorResponse'
+              examples:
+                example-not-found:
+                  value:
+                    errors:
+                      detail: No URL found for that slug.
+      description: Deletes the URL object associated with the provided slug.
+components:
+  schemas:
+    URL:
+      description: Base model that contains neccessary data to facilitate URL Shortening use-cases.
+      type: object
+      x-examples:
+        example-1:
+          original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+          slug: vssXsEZx
+      title: URL
+      properties:
+        original_url:
+          type: string
+          minLength: 1
+        slug:
+          type: string
+          minLength: 4
+          maxLength: 16
+      required:
+        - original_url
+  requestBodies:
+    URLRequest:
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            x-examples:
+              example-1:
+                url:
+                  original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+            properties:
+              url:
+                $ref: '#/components/schemas/URL'
+            required:
+              - url
+          examples:
+            example-1:
+              value:
+                url:
+                  original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+  responses:
+    URLResponse:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            x-examples:
+              example-1:
+                data:
+                  original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+                  slug: vssXsEZx
+            properties:
+              data:
+                $ref: '#/components/schemas/URL'
+            required:
+              - data
+          examples:
+            example-1:
+              value:
+                data:
+                  original_url: 'https://medium.com/red-ventures-br-tech/elixir-building-a-rest-api-using-phoenix-framework-part-i-fa3a0a23b574'
+                  slug: vssXsEZx
+    ErrorResponse:
+      description: Error response model.
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            properties:
+              errors:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    minLength: 1
+                required:
+                  - detail
+            required:
+              - errors
+            x-examples:
+              example-1:
+                errors:
+                  detail: No URL found for that slug.
+          examples:
+            example-1:
+              value:
+                errors:
+                  detail: Detailed error message.

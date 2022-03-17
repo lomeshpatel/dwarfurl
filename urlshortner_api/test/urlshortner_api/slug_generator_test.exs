@@ -61,11 +61,13 @@ defmodule UrlshortnerApi.SlugGeneratorTest do
     end
 
     test "list_slugs/0 returns all slugs 1 record" do
+      Logger.info("Total slugs: #{inspect(length(SlugGenerator.list_slugs()))}")
       slug = slug_fixture()
       assert SlugGenerator.list_slugs() == [slug]
     end
 
     test "list_slugs/0 returns all slugs more than 1 records" do
+      Logger.info("Total slugs: #{inspect(length(SlugGenerator.list_slugs()))}")
       {count, _records} = slug_fixture_bulk()
       queried_slugs = SlugGenerator.list_slugs()
 
@@ -73,6 +75,7 @@ defmodule UrlshortnerApi.SlugGeneratorTest do
     end
 
     test "list_slugs/2 returns all used slugs" do
+      Logger.info("Total slugs: #{inspect(length(SlugGenerator.list_slugs()))}")
       slug_fixture()
       {_count, _records} = slug_fixture_bulk()
       queried_slugs = SlugGenerator.list_slugs(true)

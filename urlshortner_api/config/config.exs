@@ -7,8 +7,23 @@
 # General application configuration
 import Config
 
+cache_size = Application.get_env(:urlshortner_api, UrlshortnerApi.SlugCache)[:cache_size]
+
 config :urlshortner_api,
-  ecto_repos: [UrlshortnerApi.Repo]
+  ecto_repos: [UrlshortnerApi.Repo],
+  children: [
+    # Start the Ecto repository
+    UrlshortnerApi.Repo,
+    # Start the Telemetry supervisor
+    UrlshortnerApiWeb.Telemetry,
+    # Start the PubSub system
+    {Phoenix.PubSub, name: UrlshortnerApi.PubSub},
+    # Start the Endpoint (http/https)
+    UrlshortnerApiWeb.Endpoint,
+    # Start a worker by calling: UrlshortnerApi.Worker.start_link(arg)
+    # {UrlshortnerApi.Worker, arg}
+    {UrlshortnerApi.SlugCache, [cache_size, UrlshortnerApi.SlugCache]}
+  ]
 
 # Configures the endpoint
 config :urlshortner_api, UrlshortnerApiWeb.Endpoint,

@@ -21,7 +21,7 @@ config :urlshortner_api, UrlshortnerApiWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
-  debug_errors: true,
+  debug_errors: false,
   secret_key_base: "1jVyQUkKXPyCVfqLYwH2xo9jUB4HTXudZAJmLKqDrze9hrkvjzmwJwPknNddk7z3",
   watchers: []
 
@@ -64,3 +64,8 @@ config :urlshortner_api, UrlshortnerApi.SlugGenerator,
   max_slug_length: 16,
   default_slugs_batch_size: 100,
   max_slugs_batch_size: 1000
+
+config :urlshortner_api, UrlshortnerApi.SlugCache,
+  cache_size: 100,
+  max_size: 1000,
+  refill_threshold: 0.25

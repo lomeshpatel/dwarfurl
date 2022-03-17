@@ -7,19 +7,7 @@ defmodule UrlshortnerApi.UrlShortner do
   alias UrlshortnerApi.Repo
 
   alias UrlshortnerApi.UrlShortner.Url
-
-  @doc """
-  Returns the list of urls.
-
-  ## Examples
-
-      iex> list_urls()
-      [%Url{}, ...]
-
-  """
-  def list_urls do
-    Repo.all(Url)
-  end
+  alias UrlshortnerApi.SlugCache
 
   @doc """
   Gets a single url.
@@ -50,27 +38,28 @@ defmodule UrlshortnerApi.UrlShortner do
 
   """
   def create_url(attrs \\ %{}) do
+    slug_key =
+      if Map.has_key?(attrs, :original_url) do
+        :slug
+      else
+        "slug"
+      end
+
+    {_current_slug, new_attrs} =
+      Map.get_and_update(attrs, slug_key, fn current_slug ->
+        new_slug =
+          if is_nil(current_slug) do
+            SlugCache.get(UrlshortnerApi.SlugCache)
+          else
+            current_slug
+          end
+
+        {current_slug, new_slug}
+      end)
+
     %Url{}
-    |> Url.changeset(attrs)
+    |> Url.changeset(new_attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a url.
-
-  ## Examples
-
-      iex> update_url(url, %{field: new_value})
-      {:ok, %Url{}}
-
-      iex> update_url(url, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_url(%Url{} = url, attrs) do
-    url
-    |> Url.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -87,18 +76,5 @@ defmodule UrlshortnerApi.UrlShortner do
   """
   def delete_url(%Url{} = url) do
     Repo.delete(url)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking url changes.
-
-  ## Examples
-
-      iex> change_url(url)
-      %Ecto.Changeset{data: %Url{}}
-
-  """
-  def change_url(%Url{} = url, attrs \\ %{}) do
-    Url.changeset(url, attrs)
   end
 end
