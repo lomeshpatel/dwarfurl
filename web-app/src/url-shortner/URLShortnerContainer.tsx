@@ -1,23 +1,18 @@
-import { Button, Card, CardActions, CardContent, Container, TextField } from '@mui/material';
-import * as React from 'react';
+import { Container } from '@mui/material'
+import ShortenedURLStack from './ShortenedURLStack'
+import URLShortnerForm from './URLShortnerForm'
+import useURLShortnerService from './URLShortnerService';
 
-const fullWidth = {
-  width: '100%',
+const URLShortnerContainer = () => {
+  const { dwarfURLs, shortenURL } = useURLShortnerService()
+
+  return (
+    <Container maxWidth="sm">
+      <URLShortnerForm shortenURL={shortenURL} />
+      <br></br>
+      <ShortenedURLStack dwarfURLs={dwarfURLs} />
+    </Container>
+  )
 }
 
-export default class URLShortnerContainer extends React.Component {
-  public render() {
-    return (
-      <Container maxWidth="sm">
-        <Card raised={true}>
-          <CardContent>
-            <TextField id="long-url" label="Long URL" variant="filled" sx={fullWidth} />
-          </CardContent>
-          <CardActions>
-            <Button variant="contained" sx={fullWidth}>Shorten</Button>
-          </CardActions>
-        </Card>
-      </Container>
-   );
-  }
-}
+export default URLShortnerContainer

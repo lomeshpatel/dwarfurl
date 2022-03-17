@@ -1,21 +1,41 @@
-import { render, screen } from "@testing-library/react";
-import URLShortnerContainer from "./URLShortnerContainer";
+import URLShortnerContainer from "./URLShortnerContainer"
+import { fireEvent, render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import { rest } from "msw"
+import { setupServer } from "msw/node"
+import { DwarfURL } from "./URLShortnerService"
+
+const server = setupServer(
+  rest.post('/v1/urls', (req, res, ctx) => {
+    const { url } = req.body as { url: DwarfURL }
+    const respBody = { data: { ...url, slug: "abcd1234" } }
+
+    return res(
+      ctx.status(201),
+      ctx.json(respBody),
+    )
+  })
+)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 describe('URL Shortner Container', () => {
-  test('renders TextBox for Long URL', () => {
-    render(<URLShortnerContainer />);
-    
-    const textBox = screen.getByRole('textbox');
+  const validURL = 'https://www.looneytunes.com/daffy/duck'
+  beforeEach(() => {
+    render(<URLShortnerContainer />)
+  })
 
-    expect(textBox).toBeInTheDocument();
-    expect(textBox.id).toBe('long-url');
-  });
+  test('rendered when a valid form is submitted successfully', async () => {
+    const longURLTB = screen.getByRole('textbox', { name: /Long.URL/i })
+    const shortenBtn = screen.getByRole('button', { name: /shorten/i })
 
-  test('renders Shorten button', () => {
-    render(<URLShortnerContainer />);
+    await userEvent.type(longURLTB, validURL)
 
-    const button = screen.getByText(/shorten/i);
+    fireEvent.click(shortenBtn)
 
-    expect(button).toBeInTheDocument();
-  });
-});
+    await screen.findByText(/abcd1234/i)
+    expect(screen.queryByText(/^no recent urls/i)).toBeNull()
+  })
+})

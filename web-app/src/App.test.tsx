@@ -11,26 +11,9 @@ describe('Dwarfurl App', () => {
     /* TODO */
   });
 
-  test('renders TextBox for Long URL', () => {
+  test('renders Copyright', () => {
     render(<App />);
-
-    const textBox = screen.getByRole('textbox');
-
-    expect(textBox).toBeInTheDocument();
-    expect(textBox.id).toBe('long-url');
-  });
-
-  test('renders Shorten button', () => {
-    render(<App />);
-
-    const button = screen.getByText(/shorten/i);
-
-    expect(button).toBeInTheDocument();
-  });
-
-  test('renders Looney Tunes link', () => {
-    render(<App />);
-    const linkElement = screen.getByText(/Looney Tunes/i);
+    const linkElement = screen.getByText(/copyright/i);
     expect(linkElement).toBeInTheDocument();
   });
 });
