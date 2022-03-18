@@ -1,4 +1,4 @@
-# DWARFURL /dwarfurl/ôrfˈfə
+# DWARFURL /dwôrfˈfərl/
 App that provides URL shortner functionality similar to [Tinyurl](https://tinyurl.com/).
 
 ## Structure
