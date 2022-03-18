@@ -13,6 +13,7 @@ export type ErrorResponse = {
 
 const useURLShortnerService = () => {
   const [dwarfURLs, setDwarfURLs] = useState<DwarfURL[]>([]);
+  /* eslint-disable no-unused-vars */
   const [errors, setErrors] = useState<ErrorResponse>();
 
   const shortenURL = (dwarfURL: DwarfURL) => {

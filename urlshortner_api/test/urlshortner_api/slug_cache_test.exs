@@ -74,7 +74,7 @@ defmodule UrlShortnerApi.SlugCacheTest do
     } do
       size = SlugCache.get_env(:cache_size)
       threshold = SlugCache.get_env(:refill_threshold)
-      refill_trigger = trunc(size * threshold) + 1
+      refill_trigger = threshold + 1
 
       ls =
         Stream.unfold(size, fn

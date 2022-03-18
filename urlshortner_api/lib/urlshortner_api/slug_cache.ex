@@ -67,9 +67,9 @@ defmodule UrlshortnerApi.SlugCache do
         cache
       end
 
-    if length(cache) - 1 <= get_env(:cache_size) * get_env(:refill_threshold) do
+    if length(cache) - 1 <= get_env(:refill_threshold) do
       Logger.info(
-        "Slug cache size: #{inspect(length(cache) - 1)} is below the threshold: #{inspect(get_env(:cache_size) * get_env(:refill_threshold))}. Refilling asynchronously..."
+        "Slug cache size: #{inspect(length(cache) - 1)} is below the threshold: #{inspect(get_env(:refill_threshold))}. Refilling asynchronously..."
       )
 
       refill(self())

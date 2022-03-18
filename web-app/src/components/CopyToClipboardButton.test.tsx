@@ -4,24 +4,27 @@ import CopyToClipboardButton from "./CopyToClipboardButton"
 describe('CopyToClipboardButton', () => {
   const copyText = "Scooby Doo!"
   const writeToClipboard = jest.fn()
-  let button: any
 
   beforeEach(() => {
-    render(<CopyToClipboardButton copyText={copyText} writeToClipboard={writeToClipboard} />)
-    button = screen.getByRole('button')
   })
 
   test('renders the button', () => {
+    render(<CopyToClipboardButton copyText={copyText} writeToClipboard={writeToClipboard} />)
+    const button = screen.getByRole('button')
     expect(button).toBeInTheDocument()
   })
 
   test('copies the text to the clipboard', () => {
+    render(<CopyToClipboardButton copyText={copyText} writeToClipboard={writeToClipboard} />)
+    const button = screen.getByRole('button')
     fireEvent.click(button)
 
     expect(writeToClipboard).toHaveBeenCalledWith(copyText)
   })
 
   test('renders a toast after a successful copy', () => {
+    render(<CopyToClipboardButton copyText={copyText} writeToClipboard={writeToClipboard} />)
+    const button = screen.getByRole('button')
     fireEvent.click(button)
 
     expect(screen.getByText(/copied/i)).toBeInTheDocument()

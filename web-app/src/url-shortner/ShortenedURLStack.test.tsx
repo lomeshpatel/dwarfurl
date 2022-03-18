@@ -21,12 +21,9 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe('Shortened URL Stack', () => {
-  beforeEach(() => {
-    render(<ShortenedURLStack dwarfURLs={[]} />)
-  })
-
   test('is not rendered when no shortened URLs found', () => {
-    expect(screen.queryByText(/^recent urls/i)).toBeInTheDocument()
-    expect(screen.queryByText(/^no recent urls/i)).toBeInTheDocument()
+    render(<ShortenedURLStack dwarfURLs={[]} />)
+    expect(screen.getByText(/^recent urls/i)).toBeInTheDocument()
+    expect(screen.getByText(/^no recent urls/i)).toBeInTheDocument()
   })
 })
