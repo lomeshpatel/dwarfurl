@@ -1,0 +1,1 @@
+call "%~dp0\urlshortner_api" eval UrlshortnerApi.Release.migrate

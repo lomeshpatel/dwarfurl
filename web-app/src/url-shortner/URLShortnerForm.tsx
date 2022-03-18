@@ -1,6 +1,6 @@
 import { Button, Card, CardActions, CardContent, CardHeader, TextField } from "@mui/material";
 import React, { useState } from "react";
-import useURLShortnerService, { DwarfURL, ErrorResponse } from "./URLShortnerService";
+import { DwarfURL, ErrorResponse } from "./URLShortnerService";
 
 const fullWidth = {
   width: '100%',
@@ -26,7 +26,7 @@ const URLShortnerForm = (props: URLShortnerFormProps) => {
   const [errors, setErrors] = useState<ErrorResponse>(initialErrorResponse);
 
   const validateOriginalURL = (inputValue: string) => {
-    const urlRegEx = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/);
+    const urlRegEx = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/);
     if (!urlRegEx.test(inputValue)) {
       setErrors(prevErrs => ({
         ...prevErrs, original_url: "URL must be a valid one that starts with http"

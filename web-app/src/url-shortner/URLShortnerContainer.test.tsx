@@ -23,11 +23,9 @@ afterAll(() => server.close())
 
 describe('URL Shortner Container', () => {
   const validURL = 'https://www.looneytunes.com/daffy/duck'
-  beforeEach(() => {
-    render(<URLShortnerContainer />)
-  })
 
   test('rendered when a valid form is submitted successfully', async () => {
+    render(<URLShortnerContainer />)
     const longURLTB = screen.getByRole('textbox', { name: /Long.URL/i })
     const shortenBtn = screen.getByRole('button', { name: /shorten/i })
 

@@ -1,8 +1,7 @@
-import { ContentCopyTwoTone, ShareTwoTone } from "@mui/icons-material"
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Stack, Tooltip, Typography } from "@mui/material"
-import { useEffect, useState } from "react"
+import { ShareTwoTone } from "@mui/icons-material"
+import { Card, CardActions, CardContent, CardHeader, IconButton, Stack, Tooltip, Typography } from "@mui/material"
 import CopyToClipboardButton from "../components/CopyToClipboardButton"
-import useURLShortnerService, { DwarfURL } from "./URLShortnerService"
+import { DwarfURL } from "./URLShortnerService"
 
 type ShortenedURLStackProps = {
   dwarfURLs: DwarfURL[],

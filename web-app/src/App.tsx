@@ -1,5 +1,4 @@
-import { Box, Container, Link, Typography } from '@mui/material';
-import React from 'react';
+import { Box, Container, Typography } from '@mui/material';
 import './App.css';
 import ResponsiveAppBar from './components/ResponsiveAppBar';
 import URLShortnerContainer from './url-shortner/URLShortnerContainer';

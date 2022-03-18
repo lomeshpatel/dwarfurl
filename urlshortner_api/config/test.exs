@@ -50,4 +50,4 @@ config :urlshortner_api, UrlshortnerApi.SlugGenerator,
 config :urlshortner_api, UrlshortnerApi.SlugCache,
   cache_size: 10,
   max_size: 100,
-  refill_threshold: 0.25
+  refill_threshold: 7
