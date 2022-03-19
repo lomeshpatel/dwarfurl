@@ -5,8 +5,10 @@ import { rest } from "msw"
 import { setupServer } from "msw/node"
 import { DwarfURL } from "./URLShortnerService"
 
+const apiBaseURI = '/v1/urls'
+
 const server = setupServer(
-  rest.post('/v1/urls', (req, res, ctx) => {
+  rest.post(apiBaseURI, (req, res, ctx) => {
     const { url } = req.body as { url: DwarfURL }
     const respBody = { data: { ...url, slug: "abcd1234" } }
 
@@ -35,5 +37,32 @@ describe('URL Shortner Container', () => {
 
     await screen.findByText(/abcd1234/i)
     expect(screen.queryByText(/^no recent urls/i)).toBeNull()
+  })
+
+  test('renders error toast when API returns 500', async () => {
+    server.use(
+      rest.post(apiBaseURI, (req, res, ctx) => {
+        return res(
+          ctx.status(500),
+          ctx.json({
+            errors: {
+              detail: "Internal Server Error"
+            }
+          }),
+        )
+      })
+    )
+
+    render(<URLShortnerContainer />)
+    const longURLTB = screen.getByRole('textbox', { name: /Long.URL/i })
+    const shortenBtn = screen.getByRole('button', { name: /shorten/i })
+
+    await userEvent.type(longURLTB, validURL)
+
+    fireEvent.click(shortenBtn)
+
+    await screen.findByRole('alert')
+
+    expect(screen.getByText(/^no recent urls/i)).toBeInTheDocument()
   })
 })

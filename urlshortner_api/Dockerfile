@@ -15,7 +15,7 @@
 ARG BUILDER_IMAGE="hexpm/elixir:1.13.0-erlang-24.2.1-debian-bullseye-20210902-slim"
 ARG RUNNER_IMAGE="debian:bullseye-20210902-slim"
 
-FROM ${BUILDER_IMAGE} as builder
+FROM ${BUILDER_IMAGE} as base
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
@@ -28,11 +28,14 @@ WORKDIR /app
 RUN mix local.hex --force && \
   mix local.rebar --force
 
+COPY mix.exs mix.lock ./
+
+FROM base as builder
+
 # set build ENV
 ENV MIX_ENV="prod"
 
 # install mix dependencies
-COPY mix.exs mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
@@ -66,7 +69,7 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM ${RUNNER_IMAGE}
+FROM ${RUNNER_IMAGE} as release
 
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
