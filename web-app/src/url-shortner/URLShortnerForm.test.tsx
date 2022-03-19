@@ -26,6 +26,7 @@ describe('URLShortnerForm', () => {
       const longURLTB = screen.getByRole('textbox', { name: /Long.URL/i })
       userEvent.type(longURLTB, validURL)
 
+      expect(longURLTB).toHaveValue(validURL)
       expect(screen.queryByText(/URL must be a valid one/i)).toBeNull()
     })
   })

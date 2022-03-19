@@ -1,11 +1,7 @@
 import { ContentCopyTwoTone } from "@mui/icons-material"
-import { AlertProps, IconButton, Snackbar } from "@mui/material"
-import MuiAlert from '@mui/material/Alert'
-import React, { useState } from "react"
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
-})
+import { IconButton, Snackbar } from "@mui/material"
+import { useState } from "react"
+import Alert from "./Alert"
 
 type CopyToClipboardButtonProps = {
   copyText: string,

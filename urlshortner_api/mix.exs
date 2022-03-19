@@ -10,7 +10,18 @@ defmodule UrlshortnerApi.MixProject do
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [
+        ignore_modules: [
+          UrlshortnerApi.Release,
+          UrlshortnerApiWeb,
+          UrlshortnerApiWeb.ChannelCase,
+          UrlshortnerApiWeb.Telemetry,
+          UrlshortnerApi.DataCase,
+          UrlshortnerApi.Repo,
+          UrlshortnerApi.Application
+        ]
+      ]
     ]
   end
 

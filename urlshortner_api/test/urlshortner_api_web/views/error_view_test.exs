@@ -14,4 +14,9 @@ defmodule UrlshortnerApiWeb.ErrorViewTest do
     assert render(UrlshortnerApiWeb.ErrorView, "500.json", []) ==
              %{errors: %{detail: "Internal Server Error"}}
   end
+
+  test "renders default when template is not found" do
+    assert render(UrlshortnerApiWeb.ErrorView, "not-found.json", []) ==
+             %{errors: %{detail: "Internal Server Error"}}
+  end
 end
