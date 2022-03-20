@@ -9,6 +9,8 @@ The app is broken down into 2 major components.
 ## Running The App
 These instruction allow you to run the entire app on your computer in a production-like environment. It also makes the app ready for deployment on any cloud environment that support [Docker](https://www.docker.com/).
 
+If you like to run it in a development environment and check the test coverage, please visit the respective components listed above for detailed instructions.
+
 ### Step 1 - [Install Docker and docker-compose](https://docs.docker.com/get-docker/)
 This is probably the most involved step on these instructions. But Docker has provided a very detailed and helpful [documentation](https://docs.docker.com/get-docker/) to make this step as painless as possible.
 
