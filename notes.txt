@@ -10,6 +10,8 @@ Production-ready Next Steps:
 3. Integrate with CI tool. All build tasks are already codified (including the docker image creation), so this integrations should be fairly straight forward.
 4. Define SLIs and SLOs. And add monitoring and alerting for SLOs. https://sre.google/sre-book/monitoring-distributed-systems/
 5. Add resiliency measures (e.g. Rate Limiting, Retries, Load Balancing, Chaos engineering etc).
+6. Publish API documentation generated from the openapi.yml.
+7. Add end to end testing using something like cypress.
 
 Functional Next Steps:
 1. Add advertisement service to generate some revenue.
