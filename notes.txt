@@ -1,0 +1,21 @@
+Details about the structure and design of the application and how to run it in both development and production-like environment has been documented on the README.md file located at https://github.com/lomeshpatel/dwarfurl.
+
+Notes about the implementation:
+1. This is my very first Elixir/Phoenix project and I've stayed as close to the documented best-practices as possible, but I'm sure more experienced engineer may find things I should've done differently.
+2. This is my first React project in many years, so in today's fast changing world it effectively is my first.
+
+Production-ready Next Steps:
+1. Segregate web-app and urlshortner_api into their own repositories, so they can be developed completely independently. They already are capable of independent development but having them in the same repository will create conflicts if more than one team is working on them.
+2. Add github actions to run the tests on every PR for instant feedback.
+3. Integrate with CI tool. All build tasks are already codified (including the docker image creation), so this integrations should be fairly straight forward.
+4. Define SLIs and SLOs. And add monitoring and alerting for SLOs. https://sre.google/sre-book/monitoring-distributed-systems/
+5. Add resiliency measures (e.g. Rate Limiting, Retries, Load Balancing, Chaos engineering etc).
+
+Functional Next Steps:
+1. Add advertisement service to generate some revenue.
+2. Add a user management service with ability to authenticate with third-party apps like Google and Facebook.
+3. Add ability to create custom slug, the API already supports this so only FE change is required.
+4. Enable "Share" button to share shortened URL with various social media apps.
+5. Create pricing models and add a paywall service.
+6. Internationalize the web app.
+7. Add a dark-mode theme and the ability to toggle it.
