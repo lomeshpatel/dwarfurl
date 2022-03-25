@@ -71,7 +71,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE} as release
 
-RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
+RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales postgresql-client \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
@@ -87,6 +87,7 @@ RUN chown nobody /app
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/prod/rel/urlshortner_api ./
 COPY ./entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
 
 USER nobody
 
