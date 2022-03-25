@@ -25,6 +25,10 @@ git clone https://github.com/lomeshpatel/dwarfurl.git
 Another option is to simply download the repo as a zip file by clicking on the `Code` menu up top and then clicking on `Download ZIP` menu item.
 
 ### Step 3 - Run the app
+Ensure that ports `8080`, `4001` and `5432` are free.
+  * [Instructions for Windows 10](https://www.howtogeek.com/howto/28609/how-can-i-tell-what-is-listening-on-a-tcpip-port-in-windows/)
+  * [Instructions for Mac OR Linux](https://stackoverflow.com/questions/4421633/who-is-listening-on-a-given-tcp-port-on-mac-os-x)
+
 ```
 cd dwarfurl
 docker-compose --env-file ./.env.prod up
