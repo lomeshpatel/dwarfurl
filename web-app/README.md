@@ -14,6 +14,7 @@ It also utilizes [Material UI](https://mui.com/) React components.
 git clone git@github.com:lomeshpatel/dwarfurl.git
 cd dwarfurl/web-app
 ```
+  3. [Start the URL Shortner API Server](https://github.com/lomeshpatel/dwarfurl/tree/master/urlshortner_api#run-it-locally-for-development-and-testing)
 
 ### Start the server with `npm start`
 
